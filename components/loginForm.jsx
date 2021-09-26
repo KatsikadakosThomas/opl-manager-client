@@ -8,7 +8,7 @@ const LoginForm = ()=> {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formInput);
+
 
     store.dispatch({
       type: "login",
@@ -16,7 +16,7 @@ const LoginForm = ()=> {
           email:formInput.email,
           password:formInput.password
       }})
-      console.log(store.getState());
+      console.log(`state: ${JSON.stringify(store.getState())}`);
   };
 
  
@@ -25,10 +25,12 @@ const LoginForm = ()=> {
         <div className={"form-group"}  >
         <form onSubmit={handleSubmit} >
           <label htmlFor="email">email</label>
-          <input id="email" type="email" name="email" placeholder="email" autoFocus  className={"form-control"} onChange={e=>setFormInput({...formInput,email:e.target.value})} value={formInput.email}/>
+          <input id="email" type="email" name="email" placeholder="email" autoFocus 
+           className={"form-control"} onChange={e=>setFormInput({...formInput,email:e.target.value})} value={formInput.email}/>
 
           <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" placeholder="pass" className={"form-control"} onChange={e=>setFormInput({...formInput,password:e.target.value})} value={formInput.password}/>
+          <input id="password" type="password" name="password" placeholder="pass" 
+          className={"form-control"} onChange={e=>setFormInput({...formInput,password:e.target.value})} value={formInput.password}/>
 
           <button type="submit" className={"btn btn-primary"} >Submit</button>
         </form>
