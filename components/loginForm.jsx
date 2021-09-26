@@ -1,24 +1,41 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import store from "../redux/store";
 
-class LoginForm extends Component {
-  handleSubmit = (e) => {
+
+const LoginForm = ()=> {
+
+  const [formInput, setFormInput]=useState({email:"",password:""})
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(formInput);
+
+    store.dispatch({
+      type: "login",
+      payload:{
+          email:formInput.email,
+          password:formInput.password
+      }})
+      console.log(store.getState());
   };
 
-  render() {
+ 
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="username">Username</label>
-          <input id="username" type="text" placeholder="user" autoFocus />
+        <div className={"form-group"}  >
+        <form onSubmit={handleSubmit} >
+          <label htmlFor="email">email</label>
+          <input id="email" type="email" name="email" placeholder="email" autoFocus  className={"form-control"} onChange={e=>setFormInput({...formInput,email:e.target.value})} value={formInput.email}/>
 
-          <label htmlFor="password">Psername</label>
-          <input id="password" type="password" placeholder="pass" />
-          <input type="submit" />
+          <label htmlFor="password">Password</label>
+          <input id="password" type="password" name="password" placeholder="pass" className={"form-control"} onChange={e=>setFormInput({...formInput,password:e.target.value})} value={formInput.password}/>
+
+          <button type="submit" className={"btn btn-primary"} >Submit</button>
         </form>
+        </div>
       </div>
     );
   }
-}
+
 
 export default LoginForm;
