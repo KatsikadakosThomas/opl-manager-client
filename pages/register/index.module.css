@@ -6,3 +6,13 @@
 .items{
     margin: auto;
 }
+
+.errorMessage{
+    color: red;
+    font-size: 0.6rem;
+    visibility: hidden;
+}
+
+.visible{
+    visibility:visible;
+}

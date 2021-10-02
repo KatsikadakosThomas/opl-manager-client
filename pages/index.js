@@ -14,18 +14,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const password = formInput.password;
+    store.dispatch({
+      type: "login",
+      payload: {
+        email: formInput.email,
+        password: formInput.password,
+      },
+    });
+    console.log(`state: ${JSON.stringify(store.getState())}`);
 
-    // store.dispatch({
-    //   type: "login",
-    //   payload: {
-    //     email: formInput.email,
-    //     password: formInput.password,
-    //   },
-    // });
-    // console.log(`state: ${JSON.stringify(store.getState())}`);
-
-    await axios.post(apiUrl, formInput, { withCredentials: true });
+    const data = await axios.post(apiUrl, formInput, { withCredentials: true });
+    console.log(data);
   };
 
   return (
