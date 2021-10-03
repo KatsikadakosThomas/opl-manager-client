@@ -6,9 +6,33 @@ passwordReg = () => {
   return /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/gm;
 };
 
+nameReg = () => {
+  return /^.{2,}$/;
+};
+
+//first parameter is keyboard value second is input type in string
+validate = (value, type) => {
+  switch (type) {
+    case "email":
+      return !emailReg().test(value) ? { emailError: true } : { emailError: false };
+      break;
+    case "password":
+      return !passwordReg().test(value) ? { passwordError: true } : { passwordError: false };
+      break;
+    case "name":
+      return !nameReg().test(value) ? { nameError: true } : { nameError: false };
+      break;
+
+    default:
+      return "";
+      break;
+  }
+};
+
 const validation = {
   emailReg: emailReg,
   passwordReg: passwordReg,
+  validate: validate,
 };
 
 module.exports = validation;

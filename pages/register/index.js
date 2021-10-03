@@ -5,7 +5,8 @@ import Link from "next/link";
 import styles from "./index.module.css";
 import axios from "axios";
 const apiUrl = "http://localhost:3000/api/user/Register";
-import { emailReg, passwordReg } from "../../services/validationRegex";
+import { validate } from "../../services/validationRegex";
+import call from "../../services/authService";
 
 const Register = () => {
   const [formInput, setFormInput] = useState({
@@ -18,33 +19,20 @@ const Register = () => {
   const [showError, setShowError] = useState({
     emailError: false,
     passwordError: false,
+    nameError: false,
   });
-  function validate(value, type) {
-    if (type === "email") {
-      if (!emailReg().test(value)) {
-        setShowError({ emailError: true });
-      } else {
-        setShowError({ emailError: false });
-      }
-    } else if (type === "password") {
-      if (!passwordReg().test(value)) {
-        setShowError({ passwordError: true });
-      } else {
-        setShowError({ passwordError: false });
-      }
-    }
-  }
 
   //----------------SUBMIT-----------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (showError) {
-      await axios.post(apiUrl, formInput, { withCredentials: true });
+    if (!showError.emailError && !showError.passwordError) {
+      await call.register(formInput);
     } else {
       alert("invalid email or password");
     }
   };
 
+  //------------------JSX---------------------------
   return (
     <div className={`container pt-4 ${styles.cont}`}>
       <Image src={mainIcon} alt="adventure awaits" width={100} height={100} />
@@ -57,7 +45,9 @@ const Register = () => {
         <form onSubmit={handleSubmit}>
           <div className={"form-group row"}>
             {/* ------------------NAME------------------ */}
-            <label htmlFor="name">Profile Name</label>
+            <label htmlFor="name" className={`form-group row`}>
+              Profile Name
+            </label>
             <input
               id="name"
               type="text"
@@ -65,21 +55,17 @@ const Register = () => {
               placeholder="name"
               required
               autoFocus
-              className={"form-control"}
-              onChange={(e) =>
-                setFormInput({ ...formInput, name: e.target.value })
-              }
+              className={`form-control`}
+              onChange={function change(e) {
+                let value = e.target.value;
+                setFormInput({ ...formInput, name: value });
+              }}
               value={formInput.name}
             />
           </div>
           {/* -----------------------EMAIL---------------------- */}
           <div className={"form-group row"}>
-            <label
-              htmlFor="email"
-              className={`form-group row ${
-                showError.emailError && "text-danger"
-              }`}
-            >
+            <label htmlFor="email" className={`form-group row ${showError.emailError && "text-danger"}`}>
               email
             </label>
 
@@ -93,12 +79,11 @@ const Register = () => {
               autoComplete="off"
               className={`form-control ${showError.emailError && "is-invalid"}`}
               //onChange Change state and validate values
-              onChange={(e) =>
-                setFormInput(
-                  { ...formInput, email: e.target.value },
-                  validate(e.target.value, "email")
-                )
-              }
+              onChange={function change(e) {
+                let value = e.target.value;
+                setFormInput({ ...formInput, email: value });
+                setShowError(validate(value, "email"));
+              }}
               //make the validation dissapear when focus out
               onBlur={(e) => setShowError({ emailError: false })}
               //revalidate values on focus in
@@ -106,22 +91,11 @@ const Register = () => {
               value={formInput.email}
             />
             {/* warning */}
-            <span
-              className={`${styles.errorMessage} ${
-                showError.emailError && `${styles.visible}`
-              } `}
-            >
-              Not a valid email
-            </span>
+            <span className={`${styles.errorMessage} ${showError.emailError && `${styles.visible}`} `}>Not a valid email</span>
           </div>
-          {/* ------------------------password------------------------- */}
+          {/* ------------------------PASSWORD------------------------- */}
           <div className={"form-group row"}>
-            <label
-              htmlFor="password"
-              className={`form-group row ${
-                showError.passwordError && "text-danger"
-              }`}
-            >
+            <label htmlFor="password" className={`form-group row ${showError.passwordError && "text-danger"}`}>
               Password
             </label>
             <input
@@ -131,16 +105,13 @@ const Register = () => {
               placeholder="pass"
               required
               autoComplete="off"
-              className={`form-control ${
-                showError.passwordError && "is-invalid"
-              }`}
-              //onChange Change state and validate values
-              onChange={(e) =>
-                setFormInput(
-                  { ...formInput, password: e.target.value },
-                  validate(e.target.value, "password")
-                )
-              }
+              className={`form-control ${showError.passwordError && "is-invalid"}`}
+              //onChange Change input and validate values
+              onChange={function change(e) {
+                let value = e.target.value;
+                setFormInput({ ...formInput, password: value });
+                setShowError(validate(value, "password"));
+              }}
               //make the validation dissapear when focus out
               onBlur={(e) => setShowError({ passwordError: false })}
               //revalidate values on focus in
@@ -148,13 +119,8 @@ const Register = () => {
               value={formInput.password}
             />
             {/* show validation restrictions */}
-            <span
-              className={`${styles.errorMessage} ${
-                showError.passwordError && `${styles.visible}`
-              } `}
-            >
-              Min 8 characters, at least one uppercase letter, one lowercase
-              letter, one number and one special character
+            <span className={`${styles.errorMessage} ${showError.passwordError && `${styles.visible}`} `}>
+              Min 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
             </span>
           </div>
 
